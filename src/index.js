@@ -1,46 +1,74 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import SearchBar from './components/search_bar';
-import VideoList from './components/video_list.js';
-import YTSearch from "youtube-api-search";
-import VideoDetail from './components/video_details.js';
-const API_KEY="AIzaSyB9tM06Qo7jehtKTlECbNpm9D_xaKcWqDs";
+import Increment from './components/increment';
+import Decrement from './components/decrement';
+import Display from './components/display_count';
+import AutoDecrement from './components/auto_decrement';
+import AutoIncrement from './components/auto_increment';
+
 class App extends Component {
-
     constructor(props) {
-        super(props);   //overwriting
+        super(props);
         this.state = {
-            videos: [],
-            selectedVideo: ''
+            count: 10
         }
-
     }
 
 
-    videoSearch(term) {
-        YTSearch({key: API_KEY, term:term},(videos) => {
-            console.log(videos);
-            this.setState({videos:videos,selectedVideo:videos[0]});
-        });
-
-    }
-
-    render(){
+    render() {
         return (
+            <div >
+                   <div className="change">
+                       <Display count={this.state.count}/></div>
 
-            <div>
-            <SearchBar onSearchTermChange={this.videoSearch.bind(this)}/>
-                <VideoList videos={this.state.videos} onVideoSelect={ (video) => {
-                    this.setState({
-                        selectedVideo:video
-                    })
+                <div className="row">
+                    <div className="col-md-3 col-sm-3 col-xs-3">
+                <AutoIncrement setIncrementInterval={() => {
+                   let y= setInterval(() => {
+                        if (this.state.count === 100) {
+                            clearInterval(y);
+                            alert("can't go beyond 100");
+                        }
+                        else {
+                            this.setState({count: this.state.count + 1})
+                        }
+                    }, 1000);
+                }}/></div>
+                        <div className="col-md-3 col-sm-3 col-xs-3">
+                <Increment  onIncrement={() => {
+                    if (this.state.count === 100) {
+                        alert("can't go beyond 100");
+                    }
+                    else {
+                        this.setState({count: this.state.count + 1})
+                    }
+                }}/></div>
+                    <div className="col-md-3 col-sm-3 col-xs-3">
+                <Decrement  onDecrement={() => {
+                    if (this.state.count === 0) {
+                        alert("can't go beyond 0");
 
+                    } else {
+                        this.setState({count: this.state.count - 1})
+                    }
+                }}/></div>
+                    <div className="col-md-3 col-sm-3 col-xs-3">
+                <AutoDecrement  setDecrementInterval={() => {
+                    let x=setInterval(() => {
+                        if (this.state.count === 0) {
+                            clearInterval(x);
+                            alert("can't go beyond 0");
+                        }
+                        else {
+                            this.setState({count: this.state.count - 1})
+                        }
+                    }, 1000);
                 }}/>
-                <VideoDetail video={this.state.selectedVideo}/>
-            </div>
+                    </div></div></div>
+                    )
+                    }
+                }
 
-        );
 
-    }
-}
-ReactDOM.render(<App/>,document.querySelector(".container")); //why querySelector and not getElementByClassName
+                ReactDOM.render(<App/>, document.querySelector(".container"));
+
